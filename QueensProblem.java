@@ -1,95 +1,59 @@
-import java.util.Scanner;
-public class QueensProblem{
-	public static void main(String[] args){
-		Scanner sc = new Scanner(System.in);
-		System.out.println("Enter value of n : ");
-		int n = sc.nextInt();		
-		int[][] a = new int[n][n]; 
-		for(int i=0; i<n; i++){
-			for(int j=0; j<n; j++)
-				a[i][j] = 0;
-		}
-		QueensProblem qp = new QueensProblem();
-		qp.solveQueen(a, n);
-	}
+import java.io.BufferedReader;
+import java.io.InputStreamReader;
 
-	boolean checkQueen(int[][] a, int col, int n){
-		if(col>=n)
-			return true;
-		for(int i=0; i<n; i++){
-			if(isSafe(a, i, col, n)){
-				a[i][col] = 1;
-				if(checkQueen(a, col+1, n))
-					return true;
-				a[i][col] = 0;		
-			}	
+public class NQueensBacktracking {
+	static int Q;
+	static int[][] board;
+	static boolean isAttacked(int N, int row, int col){  //int[][] board, 
+		for(int i=0; i<Q; i++){
+			if(board[row][i]==1)	// checking row
+				return true;
+		}
+		for(int i=0; i<Q; i++){
+			if(board[i][col]==1)	// checking column
+				return true;
+		}
+		for(int i=0; i<Q; i++){
+			for(int j=0; j<Q; j++){
+				if((i+j==row+col || (i-j)==(row-col)) && board[i][j]==1 )
+					//if(board[i][j]==1)
+						return true;
+			}
 		}
 		return false;
 	}
-
-	boolean solveQueen(int[][] a, int n){
-		if(!checkQueen(a, 0, n)){
-			System.out.println("Solution Not Possible !!!");
-			return false;
-		}
-		printSol(a, n);
-		return  true;
-	}
-
-	void printSol(int[][] a, int n){
-		for(int i=0; i<n; i++){
-			for(int j=0; j<n; j++)
-				System.out.print(a[i][j]+"\t");
-			System.out.println();
-		}
-	}
-/*
-	boolean safeRow(int[][] a, int row, int n){
-		for(int i=0; i<row; i++){
-			if(a[row][i]==1)
-				return false;
-			}
-		return true;
-	}	
-
-	boolean safeCol(int[][] a, int col, int n){
-		for(int i=0; i<col; i++){
-			if(a[row][i]==1)
-				return false;
-			}
-		return true;
-	}	
-	
-	boolean safeDiagonal(int[][] a, int row, int col, int n){
-		for(int i=0; i<n; i++){
-			for(int j=0; j<n; j++){
-				if(Math.abs(i-j)==Math.abs(row-col) || i+j==row+col){
-					if(a[i][j] == 1)
-						return false;
-				}		
+	static boolean NQueen(int N){   //int[][] board, 
+		if(N==0)return true;
+		for(int i=0; i<Q; i++){
+			for(int j=0; j<Q; j++){
+				if(!isAttacked(N, i, j)){	
+					board[i][j] = 1;
+					if(NQueen(N-1))	//solving subproblem
+						return true;
+					board[i][j] = 0;
+				}
 			}
 		}
-		return true;
-	}	
-
-	boolean isSafe(int[][] a, int row, int col, int n){
-		if(safeCol(a, col, n) && safeDiagonal(a, row, col, n))
-			return true;
-		return false;		
+		return false;
 	}
-*/
-	
-	 boolean isSafe(int[][] a, int row, int col, int n){
-        int i, j;
-        for (i = 0; i < col; i++)
-            if (a[row][i] == 1)
-                return false;
-        for (i=row, j=col; i>=0 && j>=0; i--, j--)
-            if (a[i][j] == 1)
-                return false;
-        for (i=row, j=col; j>=0 && i<n; i++, j--)
-            if (a[i][j] == 1)
-                return false;
-        return true;
-    } 
+	static void PrintBoard(int N){		
+		if(NQueen(N)){
+			for(int i=0; i<N; i++){
+				for(int j=0; j<N; j++){
+					System.out.print(board[i][j]+"   ");
+				}
+				System.out.println();
+			}
+		}else
+			System.out.println("Solution Not Possible !");
+		
+	}
+	public static void main(String[] args) throws Exception{
+		System.out.print("Enter no. of queens: ");
+		BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
+		Q = Integer.parseInt(br.readLine());
+		int N = Q;
+		board = new int[N][N];
+		PrintBoard(N);
+	}
 }
